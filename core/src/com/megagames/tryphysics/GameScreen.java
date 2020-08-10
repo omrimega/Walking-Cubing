@@ -26,6 +26,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -100,6 +102,9 @@ public class GameScreen implements Screen {
     //effect
     private ParticleEffect fire;
 
+    private TextField Name;
+
+
 
     GameScreen() {
         //camera
@@ -132,6 +137,11 @@ public class GameScreen implements Screen {
         player = createPlayer(50, 30, 35, 35);
         bullet = createBullet(-1,10, 5);
         bodytodestroy = new Stack<>();
+
+        Skin skin = new Skin(Gdx.files.internal("name.png"));
+        Name = new TextField("", skin);
+        Name.setPosition(player.getPosition().x, player.getPosition().y);
+        Name.setSize(200,200);
 
 
         for (int i =0; i < 5; i++) {
@@ -176,7 +186,7 @@ public class GameScreen implements Screen {
 
         fire.update(deltaTime);
         fire.draw(batch);
-
+        Name.draw(batch, 120);
         batch.end();
 
         phybug.render(world, camera.combined.scl(PPM));
@@ -184,7 +194,7 @@ public class GameScreen implements Screen {
     }
 
     private void drawPlayerINFO() {
-        fontName.draw(batch,"OMRIMEGA!"+" "+drawAMMO()+" "+drawCanJump() ,player.getPosition().x*PPM-100,player.getPosition().y*PPM+85);
+        fontName.draw(batch,"OMRIMEGA"+" "+drawAMMO()+" "+drawCanJump() ,player.getPosition().x*PPM-100,player.getPosition().y*PPM+85);
         love.draw(batch,""+drawHearts(),player.getPosition().x*PPM-100,player.getPosition().y*PPM+37);
         if (player.getLinearVelocity().x < 3 && player.getLinearVelocity().x > -3 && player.getLinearVelocity().y <3 && player.getLinearVelocity().y > -3 && canJump) {
             if (nLove <0.5)
@@ -406,6 +416,11 @@ public class GameScreen implements Screen {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.R))
             Gdx.app.exit();
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+
+        }
+
+
     }
 
 
