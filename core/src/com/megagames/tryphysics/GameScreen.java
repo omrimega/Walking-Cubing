@@ -184,7 +184,7 @@ public class GameScreen implements Screen {
     }
 
     private void drawPlayerINFO() {
-        fontName.draw(batch,"OMRIMEGA"+" "+drawAMMO()+" "+drawCanJump() ,player.getPosition().x*PPM-100,player.getPosition().y*PPM+85);
+        fontName.draw(batch,"OMRIMEGA!"+" "+drawAMMO()+" "+drawCanJump() ,player.getPosition().x*PPM-100,player.getPosition().y*PPM+85);
         love.draw(batch,""+drawHearts(),player.getPosition().x*PPM-100,player.getPosition().y*PPM+37);
         if (player.getLinearVelocity().x < 3 && player.getLinearVelocity().x > -3 && player.getLinearVelocity().y <3 && player.getLinearVelocity().y > -3 && canJump) {
             if (nLove <0.5)
