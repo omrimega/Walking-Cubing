@@ -3,6 +3,7 @@ package com.megagames.tryphysics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -26,8 +27,12 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -103,6 +108,9 @@ public class GameScreen implements Screen {
     private ParticleEffect fire;
 
     private TextField Name;
+    private TextButton Button;
+
+    private Stage stage;
 
 
 
@@ -111,6 +119,10 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
         viewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+        stage.setViewport(viewport);
 
         //background
         backgrounds = new Texture[2];
@@ -138,11 +150,20 @@ public class GameScreen implements Screen {
         bullet = createBullet(-1,10, 5);
         bodytodestroy = new Stack<>();
 
-        Skin skin = new Skin(Gdx.files.internal("name.png"));
-        Name = new TextField("", skin);
-        Name.setPosition(player.getPosition().x, player.getPosition().y);
-        Name.setSize(200,200);
+        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+        Name = new TextField("your name", skin);
+        Name.setPosition(player.getPosition().x*PPM, player.getPosition().y*PPM);
+        Name.setSize(400,400);
+
+        Name.addListener(new ClickListener() {
+            @Override
+            public void touchUp(InputEvent e, float x, float y, int point, int button) {
+
+            }
+        });
+
+        stage.addActor(Name);
 
         for (int i =0; i < 5; i++) {
             Body b = createPlayer(50*i, 30, 50, 50); // mass : 2.4414062
@@ -176,7 +197,6 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-
         //scrolling background
         //renderBackground(deltaTime);
         //renderLogo(deltaTime);
@@ -186,7 +206,8 @@ public class GameScreen implements Screen {
 
         fire.update(deltaTime);
         fire.draw(batch);
-        Name.draw(batch, 120);
+        Name.draw(batch, 200);
+
         batch.end();
 
         phybug.render(world, camera.combined.scl(PPM));
@@ -194,7 +215,7 @@ public class GameScreen implements Screen {
     }
 
     private void drawPlayerINFO() {
-        fontName.draw(batch,"OMRIMEGA"+" "+drawAMMO()+" "+drawCanJump() ,player.getPosition().x*PPM-100,player.getPosition().y*PPM+85);
+        fontName.draw(batch,Name.getText()+" "+drawAMMO()+" "+drawCanJump() ,player.getPosition().x*PPM-100,player.getPosition().y*PPM+85);
         love.draw(batch,""+drawHearts(),player.getPosition().x*PPM-100,player.getPosition().y*PPM+37);
         if (player.getLinearVelocity().x < 3 && player.getLinearVelocity().x > -3 && player.getLinearVelocity().y <3 && player.getLinearVelocity().y > -3 && canJump) {
             if (nLove <0.5)
@@ -300,12 +321,6 @@ public class GameScreen implements Screen {
             }
 
         time += 0.1f;
-      //  System.out.println("bullet mass" + bullet.getMass()*10000);
-      //  System.out.println("player mass" + player.getMass()*10000);
-
-
-
-
 
         cameraUpdate(deltaTime);
         inputUpdate(deltaTime);
@@ -317,10 +332,10 @@ public class GameScreen implements Screen {
         position.x = player.getPosition().x * PPM;
         position.y = player.getPosition().y * PPM +100;
         camera.position.set(position);
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
-            camera.zoom += 0.05;
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
-            camera.zoom -= 0.05;
+       // if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+           // camera.zoom += 0.05;
+      //  if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
+         //   camera.zoom -= 0.05;
 
         camera.update();
     }
@@ -414,7 +429,7 @@ public class GameScreen implements Screen {
                 fire.reset();
             }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.R))
+        if (Gdx.input.isKeyPressed(Input.Keys.F4))
             Gdx.app.exit();
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 
