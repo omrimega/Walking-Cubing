@@ -7,9 +7,9 @@ import com.megagames.tryphysics.TryPhysicsGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 480*1;
-		config.width = 720*1;
-		config.fullscreen = true;
+		config.height = 800*1;
+		config.width = config.height*16/9*1;
+		config.fullscreen = false;
 		config.backgroundFPS = 60;
 		config.foregroundFPS =60;
 		new LwjglApplication(new TryPhysicsGame(), config);
