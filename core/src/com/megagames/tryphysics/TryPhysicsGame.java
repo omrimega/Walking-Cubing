@@ -1,37 +1,35 @@
 package com.megagames.tryphysics;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.megagames.tryphysics.SplashScreen;
+
+import java.awt.Menu;
 
 
 public class TryPhysicsGame extends Game {
 
-	public static final int V_WIDTH = 16*120;
-	public static final int V_HEIGHT = 9*120;
-
 	public GameScreen gameScreen;
 	public IntroScreen introScreen;
-	public SplashScreen splashScreen;
+	public MenuScreen menuScreen;
 
 	public OrthographicCamera camera;
+
+	public String name = "";
 
 
 	@Override
 	public void create() {
 
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, V_WIDTH, V_HEIGHT);
+		camera.setToOrtho(false, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 
-		gameScreen = new GameScreen();
-		introScreen = new IntroScreen();
-		splashScreen = new SplashScreen(this);
-		setScreen(introScreen);
+		gameScreen = new GameScreen(this);
+		introScreen = new IntroScreen(this);
+		menuScreen = new MenuScreen(this);
+
+		setScreen(gameScreen);
 	}
 
 	@Override
@@ -39,7 +37,7 @@ public class TryPhysicsGame extends Game {
 		super.dispose();
 		gameScreen.dispose();
 		introScreen.dispose();
-		splashScreen.dispose();
+		menuScreen.dispose();
 	}
 
 	@Override
@@ -50,5 +48,6 @@ public class TryPhysicsGame extends Game {
 	@Override
 	public void resize(int width, int height) {
 //		gameScreen.resize(width, height);
+		//introScreen.resize(width, height);
 	}
 }

@@ -1,5 +1,5 @@
 {
-BitmapFont: { default-font: { file: default.fnt } },
+BitmapFont: { bitfont: { file: bit.fnt } },
 Color: {
 	green: { a: 1, b: 0, g: 1, r: 0 },
 	white: { a: 1, b: 1, g: 1, r: 1 },
@@ -14,7 +14,7 @@ ButtonStyle: {
 	toggle: { parent: default, checked: default-round-down }
 },
 TextButtonStyle: {
-	default: { parent: default, font: default-font, fontColor: white },
+	default: { parent: default, font: bitfont, fontColor: white },
 	toggle: { parent: default, checked: default-round-down, downFontColor: red }
 },
 ScrollPaneStyle: {
@@ -22,9 +22,9 @@ ScrollPaneStyle: {
 },
 SelectBoxStyle: {
 	default: {
-		font: default-font, fontColor: white, background: default-select,
+		font: bitfont, fontColor: white, background: default-select,
 		scrollStyle: default,
-		listStyle: { font: default-font, selection: default-select-selection }
+		listStyle: { font: bitfont, selection: default-select-selection }
 	}
 },
 SplitPaneStyle: {
@@ -32,7 +32,7 @@ SplitPaneStyle: {
 	default-horizontal: { handle: default-splitpane }
 },
 WindowStyle: {
-	default: { titleFont: default-font, background: default-window, titleFontColor: white },
+	default: { titleFont: bitfont, background: default-window, titleFontColor: white },
 	dialog: { parent: default, stageBackground: dialogDim }
 },
 ProgressBarStyle: {
@@ -44,16 +44,16 @@ SliderStyle: {
 	default-vertical: { parent: default-vertical }
 },
 LabelStyle: {
-	default: { font: default-font, fontColor: white }
+	default: { font: bitfont, fontColor: white }
 },
 TextFieldStyle: {
-	default: { selection: selection, background: textfield, font: default-font, fontColor: white, cursor: cursor }
+	default: { selection: selection, background: textfield, font: bitfont, fontColor: white, cursor: cursor }
 },
 CheckBoxStyle: {
-	default: { checkboxOn: check-on, checkboxOff: check-off, font: default-font, fontColor: white }
+	default: { checkboxOn: check-on, checkboxOff: check-off, font: bitfont, fontColor: white }
 },
 ListStyle: {
-	default: { fontColorUnselected: white, selection: selection, fontColorSelected: white, font: default-font }
+	default: { fontColorUnselected: white, selection: selection, fontColorSelected: white, font: bitfont }
 },
 TouchpadStyle: {
 	default: { background: default-pane, knob: default-round-large }
@@ -63,7 +63,7 @@ TreeStyle: {
 },
 TextTooltipStyle: {
 	default: {
-		label: { font: default-font, fontColor: white },
+		label: { font: bitfont, fontColor: white },
 		background: default-pane, wrapWidth: 150
 	}
 },

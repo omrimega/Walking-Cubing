@@ -5,6 +5,7 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,6 +14,9 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -44,6 +48,7 @@ import java.util.Stack;
 import static com.megagames.tryphysics.Constants.PPM;
 
 public class GameScreen implements Screen {
+    private TiledObject tl;
 
     //לבנות מסך פתיחה שכולל, כפתור כניסה, תיבת טקסט לרשום את השם, וכמה דמויות
 
@@ -112,12 +117,19 @@ public class GameScreen implements Screen {
 
     private Stage stage;
 
+    private TryPhysicsGame gamein;
+
+    private OrthogonalTiledMapRenderer tmr;
+    private TiledMap map;
 
 
-    GameScreen() {
+
+    public GameScreen(TryPhysicsGame gameout) {
+        gamein = gameout;
+
         //camera
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
+        camera.setToOrtho(false, WORLD_WIDTH/2, WORLD_HEIGHT/2);
         viewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 
         stage = new Stage();
@@ -142,10 +154,7 @@ public class GameScreen implements Screen {
         world = new World(new Vector2(0, -9.8f), false);
         phybug = new Box2DDebugRenderer();
 
-        platform = createBox(30, 0, 3000, 50);
-        block = createBox(3000, 3050, 50, 3000);
-        block = createBox(30, 6050, 3000, 50);
-        block = createBox(-3050, 3050, 50, 3000);
+
         player = createPlayer(50, 30, 35, 35);
         bullet = createBullet(-1,10, 5);
         bodytodestroy = new Stack<>();
@@ -159,11 +168,9 @@ public class GameScreen implements Screen {
         Name.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent e, float x, float y, int point, int button) {
-
+                System.out.println("up");
             }
         });
-
-        stage.addActor(Name);
 
         for (int i =0; i < 5; i++) {
             Body b = createPlayer(50*i, 30, 50, 50); // mass : 2.4414062
@@ -174,15 +181,30 @@ public class GameScreen implements Screen {
         //world.setContactListener(this);
 
         //font
-        fontName = new BitmapFont(Gdx.files.internal("BitMap.fnt"));
+        fontName = new BitmapFont(Gdx.files.internal("bit.fnt"));
         love = new BitmapFont(Gdx.files.internal("gameFont.fnt"));
 
         //effect
         fire = new ParticleEffect();
         fire.load(Gdx.files.internal("fireEffect"), Gdx.files.internal(""));
 
+        map = new TmxMapLoader().load("tiled/tiled.tmx");
+        tmr = new OrthogonalTiledMapRenderer(map);
+
+        tl = new TiledObject();
+        createBodies();
+
 
         batch = new SpriteBatch();
+    }
+
+    public static final float GRAVITY = 9.8F;
+
+    public void createBodies(){
+        //create a Box2d world will contain the physical entities (bodies)
+
+        String layerName = "block";
+        tl.buildBuildingsBodies(map,world,layerName);
     }
 
 
@@ -194,28 +216,26 @@ public class GameScreen implements Screen {
         //graphics
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         batch.setProjectionMatrix(camera.combined);
+        tmr.render();
+
         batch.begin();
-        //scrolling background
-        //renderBackground(deltaTime);
-        //renderLogo(deltaTime);
-        batch.draw(background, -3000, 0, 30000,3000);
+        //batch.draw(background, -3000, 0, 30000,3000);
         drawSprites();
         drawPlayerINFO();
 
         fire.update(deltaTime);
         fire.draw(batch);
-        Name.draw(batch, 200);
-
+        stage.draw();
         batch.end();
+
 
         phybug.render(world, camera.combined.scl(PPM));
 
     }
 
     private void drawPlayerINFO() {
-        fontName.draw(batch,Name.getText()+" "+drawAMMO()+" "+drawCanJump() ,player.getPosition().x*PPM-100,player.getPosition().y*PPM+85);
+        fontName.draw(batch,gamein.name+" "+drawAMMO()+" "+drawCanJump() ,player.getPosition().x*PPM-100,player.getPosition().y*PPM+85);
         love.draw(batch,""+drawHearts(),player.getPosition().x*PPM-100,player.getPosition().y*PPM+37);
         if (player.getLinearVelocity().x < 3 && player.getLinearVelocity().x > -3 && player.getLinearVelocity().y <3 && player.getLinearVelocity().y > -3 && canJump) {
             if (nLove <0.5)
@@ -285,6 +305,9 @@ public class GameScreen implements Screen {
     }
 
     private String drawCanJump() {
+        if ((int) player.getLinearVelocity().y == 0) {
+            canJump = true;
+        }
         String j = "J";
         if (canJump) {
             j = "J";
@@ -306,7 +329,10 @@ public class GameScreen implements Screen {
     }
 
     public void update(float deltaTime) {
-            world.step(1 / 45f, 6, 2);
+        world.step(1 / 45f, 6, 2);
+        camera.update();
+        tmr.setView(camera);
+
 
         //Gdx.app.log("bodies on the world: "+world.getBodyCount() ,"");
         //Gdx.app.log("bodies to destroy: "+bodytodestroy.capacity() ,"");
@@ -322,7 +348,7 @@ public class GameScreen implements Screen {
 
         time += 0.1f;
 
-        cameraUpdate(deltaTime);
+        //cameraUpdate(deltaTime);
         inputUpdate(deltaTime);
 
     }
@@ -330,12 +356,9 @@ public class GameScreen implements Screen {
     public void cameraUpdate(float deltaTime) {
         Vector3 position = camera.position;
         position.x = player.getPosition().x * PPM;
-        position.y = player.getPosition().y * PPM +100;
+        position.y = player.getPosition().y * PPM +400;
         camera.position.set(position);
-       // if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
-           // camera.zoom += 0.05;
-      //  if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
-         //   camera.zoom -= 0.05;
+
 
         camera.update();
     }
@@ -371,15 +394,16 @@ public class GameScreen implements Screen {
         }
 
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && canJump) {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) { //&&canJump
             moveUp += 15;
             canJump = false;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             moveUp -= 50;
         }
-        if ((int) player.getLinearVelocity().y == 0)
+        if ((int) player.getLinearVelocity().y == 0) {
             player.setLinearVelocity(player.getLinearVelocity().x, player.getLinearVelocity().y + moveUp);
+        }
 
         //System.out.println("Velocity y: " + (int) player.getLinearVelocity().x);
 
@@ -415,8 +439,8 @@ public class GameScreen implements Screen {
 
             //PUSH SKILL
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            Body bullet2 = createBullet(-30, 10,5 );
-            bullet2.setLinearVelocity(60, 3);
+            //Body bullet2 = createBullet(-30, 10,5 );
+            //bullet2.setLinearVelocity(60, 3);
             if (player.getLinearVelocity().x>1 && Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.getLinearVelocity().x < 35) {
                 player.applyLinearImpulse(5,0, player.getPosition().x, player.getPosition().y, true);
                 fire.setPosition(player.getPosition().x*PPM, player.getPosition().y*PPM);
@@ -450,7 +474,7 @@ public class GameScreen implements Screen {
         Body pBody;
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.StaticBody;
-        def.position.set(x/2/PPM, (float) y/2/PPM);
+        def.position.set(x/PPM, (float) y/PPM);
         def.fixedRotation = false;
         pBody = world.createBody(def);
 
@@ -563,6 +587,7 @@ public class GameScreen implements Screen {
         spr[0].dispose();
         boxSprite.getTexture().dispose();
         fire.dispose();
+        map.dispose();
     }
 
     public void timer(int time) {
