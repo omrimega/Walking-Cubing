@@ -254,7 +254,7 @@ public class GameScreen implements Screen {
         rayHandler.updateAndRender();
         //light.setPosition(player.getPosition());
 
-       //phybug.render(world, camera.combined.scl(PPM));
+       phybug.render(world, camera.combined.scl(PPM));
 
     }
 
