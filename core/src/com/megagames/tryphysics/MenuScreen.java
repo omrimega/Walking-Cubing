@@ -1,5 +1,6 @@
 package com.megagames.tryphysics;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -21,11 +22,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -50,6 +54,8 @@ public class MenuScreen implements Screen {
     private TextField name;
     private TextButton btnGame;
     private Label title, arrow, playerName;
+    private TextButton omri;
+    private Skin skin;
 
     private Texture background;
 
@@ -75,7 +81,7 @@ public class MenuScreen implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         stage.setViewport(viewport);
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
         skin.getFont("bitfont").getData().setScale(1.4f);
 
         background = new Texture(Gdx.files.internal("backgroundMenu.png"));
@@ -99,6 +105,12 @@ public class MenuScreen implements Screen {
         playerName = new Label("", skin);
         playerName.setColor(Color.GRAY);
 
+
+
+
+
+
+
         btnGame = new TextButton("Accept", skin);
         btnGame.setPosition(WORLD_WIDTH/2-btnGame.getWidth()/2,WORLD_HEIGHT/2-name.getHeight());
         btnGame.addListener(new ClickListener() {
@@ -107,6 +119,16 @@ public class MenuScreen implements Screen {
                 gamein.setScreen(gamein.gameScreen);
             }
         });
+
+
+        //createOmriButton();
+        createImageButton(900, 700, "Omri", "omri.png");
+        createImageButton(400, 700, "Avraham", "avraham.png");
+
+        //createImageButtonAvraham(500, 700, "avraham", "avraham.png");
+
+
+
 
         title = new Label("Write your Name: ", skin);
         title.setPosition(WORLD_WIDTH/2-title.getWidth()/2,WORLD_HEIGHT/2+name.getHeight()+title.getHeight()/2);
@@ -130,6 +152,15 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            // camera.zoom += 0.05;
+            System.out.println(Gdx.input.getX());
+            System.out.println(Gdx.input.getY());
+
+        }
+
         world.step(1 / 45f, 6, 2);
 
         //graphics
@@ -160,6 +191,81 @@ public class MenuScreen implements Screen {
         }
         player.setLinearVelocity(player.getLinearVelocity().x + moveForce, player.getLinearVelocity().y);
 
+    }
+
+    public void createOmriButton() {
+        omri = new TextButton("Omri", skin);
+        omri.setPosition(WORLD_WIDTH/2-btnGame.getWidth()/2,WORLD_HEIGHT/2-name.getHeight()+300);
+
+        Texture omritex = new Texture(Gdx.files.internal("omri.png"));
+        final Image omriimg = new Image(omritex);
+        omriimg.setPosition(omri.getX(), omri.getY()+50);
+
+        omri.addListener(new ClickListener() {
+            @Override
+            public void touchUp(InputEvent e, float x, float y, int point, int button) {
+                Sprite spriteOmri = new Sprite(new Texture("omri.png"));
+                spriteOmri.setSize(omriimg.getImageWidth(), omriimg.getImageHeight());
+                spriteOmri.setOrigin(spriteOmri.getWidth() / 2, spriteOmri.getHeight() / 2);
+                player.setUserData(spriteOmri);
+            }
+        });
+
+        stage.addActor(omriimg);
+        stage.addActor(omri);
+    }
+
+    public void createImageButton(int x, int y, final String btnName, final String photoname) {
+        TextButton txtBtn = new TextButton(btnName, skin);
+        txtBtn.setPosition(x,y);
+
+        Texture tex = new Texture(Gdx.files.internal(photoname));
+        final Image img = new Image(tex);
+        img.setPosition(txtBtn.getX(), txtBtn.getY()+50);
+        img.setWidth(115);
+        img.setHeight(154);
+
+        txtBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked (InputEvent event, float x, float y) {
+                Sprite sprOmri = new Sprite(new Texture(photoname));
+                float scale = 0.45f;
+                sprOmri.setSize(img.getImageWidth()*scale, img.getImageHeight()*scale);
+                sprOmri.setOrigin(sprOmri.getWidth() / 2, sprOmri.getHeight() / 2);
+                player.setUserData(sprOmri);
+                gamein.type = photoname;
+            }
+        });
+
+        stage.addActor(img);
+        stage.addActor(txtBtn);
+
+    }
+
+    public void createImageButtonAvraham(int x, int y, String btnName, final String photoname) {
+        TextButton txtBtnAvraham = new TextButton(btnName, skin);
+        txtBtnAvraham.setPosition(x,y);
+
+        Texture tex = new Texture(Gdx.files.internal(photoname));
+        final Image imgAvraham = new Image(tex);
+        imgAvraham.setPosition(x+40, y+50);
+        imgAvraham.setWidth(115);
+        imgAvraham.setHeight(154);
+
+        txtBtnAvraham.addListener(new ClickListener() {
+            @Override
+            public void clicked (InputEvent event, float x, float y) {
+
+                Sprite sprAvraham = new Sprite(new Texture(photoname));
+                sprAvraham.setSize(imgAvraham.getImageWidth(), imgAvraham.getImageHeight());
+                sprAvraham.setOrigin(sprAvraham.getWidth() / 2, sprAvraham.getHeight() / 2);
+                player.setUserData(sprAvraham);
+                System.out.println(player.getUserData());
+            }
+        });
+
+        stage.addActor(imgAvraham);
+        stage.addActor(txtBtnAvraham);
     }
 
     @Override

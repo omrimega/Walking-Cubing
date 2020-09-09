@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="60" height="33" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="45">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="60" height="33" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="92">
+ <editorsettings>
+  <export target="tiled..tmx" format="tmx"/>
+ </editorsettings>
  <tileset firstgid="1" name="block" tilewidth="32" tileheight="32" tilecount="1" columns="1">
   <image source="wall.png" width="35" height="35"/>
  </tileset>
  <tileset firstgid="2" source="wall.tsx"/>
  <tileset firstgid="3" source="Terrain.tsx"/>
+ <tileset firstgid="250" source="Decorations.tsx"/>
  <layer id="1" name="שכבת משבצות 1" width="60" height="33">
   <data encoding="base64" compression="zlib">
    eJztl8ENwjAQBC03QVA6IFE6AJTySFogaQHokLPESby5Pcmc9zGKX9HOx+vNKaVLI2RhFG7CEpxVOH1878IWnJ2+oUH7lv/1Djl7YD71fQhPIy9hcvCdgPnU9yB0Ro6Ovqh86lu+g5HR0ReVT33Pyd7lV0dfVD71Rbw3VkdfVD70/Tw7+M7AfOzfuNAXQwbQfZ1b8B3oW61vrdA3Nty/3L/cv9y/3L94X+7f3/Kxf+PSsi+iz2tH3xulm6xd/i8U1zeDCNzc
@@ -29,5 +33,17 @@
   <object id="21" x="1312" y="736" width="576" height="96"/>
   <object id="22" x="608" y="672" width="32" height="224"/>
   <object id="25" x="32" y="736" width="576" height="96"/>
+  <object id="78" x="104.75" y="904" width="34" height="8.5"/>
+  <object id="80" x="457" y="871.25" width="27.5" height="7.5"/>
+  <object id="81" x="457" y="872" width="7.75" height="40.5"/>
+  <object id="82" x="132.75" y="871.25" width="5.25" height="40.5"/>
+  <object id="83" x="104.75" y="870.75" width="7" height="41.25"/>
+  <object id="86" x="777.098" y="135.981" width="34.5" height="7.5"/>
+  <object id="90" x="1129.5" y="134.75" width="32.75" height="7.25"/>
  </objectgroup>
+ <layer id="5" name="Tile Layer 3" width="60" height="33">
+  <data encoding="base64" compression="zlib">
+   eJzt2KENACAMRcEyAijYf1EYAAFJBSF3+ol+2wiAvVoiWslvX9XX/eNww00LAAAAAPzF7zSnBcgwAYSLAWE=
+  </data>
+ </layer>
 </map>

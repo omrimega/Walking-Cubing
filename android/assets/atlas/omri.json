@@ -1,0 +1,15 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	bit: {
+		file: bit.fnt
+	}
+},
+com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
+	default: {
+		parent: default
+		imageUp: omri
+		imageDown: omri
+		font: bit
+	}
+},
+}

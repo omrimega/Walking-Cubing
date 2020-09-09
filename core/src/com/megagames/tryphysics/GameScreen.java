@@ -23,6 +23,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -41,9 +42,15 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.megagames.tryphysics.TypesOfPlayer.Omri;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
+import java.util.HashMap;
 import java.util.Stack;
+
+import box2dLight.Light;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 
 import static com.megagames.tryphysics.Constants.PPM;
 
@@ -56,6 +63,9 @@ public class GameScreen implements Screen {
     public World world;
     public Body player, platform, block, enemy, bullet, qbullet;
     public Stack <Body> bodytodestroy;
+
+    private RayHandler rayHandler;
+    private Light light;
 
     public float life = 10;
 
@@ -74,14 +84,15 @@ public class GameScreen implements Screen {
 
     //screen
     private OrthographicCamera camera;
-    private Viewport viewport;
+    public Viewport viewport;
 
     //graphics
-    private SpriteBatch batch;
+    public SpriteBatch batch;
 
     //array pf backgrounds
     private Texture[] backgrounds;
     private Texture background, wall;
+    private Texture pistol;
 
     //array of logo
     private Texture logo;
@@ -103,8 +114,8 @@ public class GameScreen implements Screen {
     private Sprite boxSprite;
 
     //font
-    private BitmapFont fontName;
-    private BitmapFont love;
+    public BitmapFont fontName;
+    public BitmapFont love;
 
     //help numbers
     private float nLove=0, nFontName=0;
@@ -115,13 +126,17 @@ public class GameScreen implements Screen {
     private TextField Name;
     private TextButton Button;
 
-    private Stage stage;
+    public Stage stage;
 
-    private TryPhysicsGame gamein;
+    public TryPhysicsGame gamein;
 
     private OrthogonalTiledMapRenderer tmr;
     private TiledMap map;
+    private boolean pistolChoose = false;
 
+    public Omri omri;
+
+    public float delta = 0;
 
 
     public GameScreen(TryPhysicsGame gameout) {
@@ -155,29 +170,18 @@ public class GameScreen implements Screen {
         phybug = new Box2DDebugRenderer();
 
 
-        player = createPlayer(50, 30, 35, 35);
-        bullet = createBullet(-1,10, 5);
+
+        //player = createPlayer(50, 30, 35, 35);
+        //bullet = createBullet(-1,10, 10);
         bodytodestroy = new Stack<>();
 
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        Name = new TextField("your name", skin);
-        Name.setPosition(player.getPosition().x*PPM, player.getPosition().y*PPM);
-        Name.setSize(400,400);
 
-        Name.addListener(new ClickListener() {
-            @Override
-            public void touchUp(InputEvent e, float x, float y, int point, int button) {
-                System.out.println("up");
-            }
-        });
-
-        for (int i =0; i < 5; i++) {
-            Body b = createPlayer(50*i, 30, 50, 50); // mass : 2.4414062
-        }
+        omri = new Omri(this);
 
         //contact dec
-        world.setContactListener(new WorldContactListener(this));
+        world.setContactListener(new WorldContactListener(this, omri));
         //world.setContactListener(this);
 
         //font
@@ -194,8 +198,18 @@ public class GameScreen implements Screen {
         tl = new TiledObject();
         createBodies();
 
+        rayHandler = new RayHandler(world);
+        rayHandler.setAmbientLight(0,0,0,0.9f);
+
+        Color windowColor = new Color(63, 191, 191, 0.6f);
+        light = new PointLight(rayHandler, 4000, windowColor, 50, 119 /PPM, (WORLD_HEIGHT-950) /PPM);
+       // light = new PointLight(rayHandler, 4000, windowColor, 50, 1144 /PPM, (WORLD_HEIGHT-196) /PPM);
+       // light = new PointLight(rayHandler, 4000, windowColor, 50, 791 /PPM, (WORLD_HEIGHT-196) /PPM);
+
+
 
         batch = new SpriteBatch();
+
     }
 
     public static final float GRAVITY = 9.8F;
@@ -211,6 +225,8 @@ public class GameScreen implements Screen {
     @Override
     public void render(float deltaTime) {
 
+        delta = deltaTime;
+
         update(Gdx.graphics.getDeltaTime());
 
         //graphics
@@ -222,15 +238,23 @@ public class GameScreen implements Screen {
         batch.begin();
         //batch.draw(background, -3000, 0, 30000,3000);
         drawSprites();
-        drawPlayerINFO();
+        //drawPlayerINFO();
+        //drawSkills();
 
         fire.update(deltaTime);
         fire.draw(batch);
         stage.draw();
+        //omri.OmriPlay();
+        for (HashMap.Entry<String, Omri> entry : gamein.players.entrySet()) {
+            entry.getValue().OmriPlay();
+        }
         batch.end();
 
+        rayHandler.setCombinedMatrix(camera.combined.cpy().scale(PPM, PPM, 1f));
+        rayHandler.updateAndRender();
+        //light.setPosition(player.getPosition());
 
-        phybug.render(world, camera.combined.scl(PPM));
+       //phybug.render(world, camera.combined.scl(PPM));
 
     }
 
@@ -292,7 +316,7 @@ public class GameScreen implements Screen {
     }
 
     private String drawAMMO() {
-        System.out.println((int)time);
+        //System.out.println((int)time);
         String showAmmo = ""+ammo;
         if (ammo == 0) {
             if ((int)time % 2 == 0)
@@ -303,6 +327,7 @@ public class GameScreen implements Screen {
         } else showAmmo = ""+ammo;
         return showAmmo;
     }
+
 
     private String drawCanJump() {
         if ((int) player.getLinearVelocity().y == 0) {
@@ -333,7 +358,15 @@ public class GameScreen implements Screen {
         camera.update();
         tmr.setView(camera);
 
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            // camera.zoom += 0.05;
+            System.out.println(Gdx.input.getX());
+            System.out.println(Gdx.input.getY());
+            Color windowColor = new Color(63, 191, 191, 0.3f);
+            light = new PointLight(rayHandler, 50, windowColor, 50, Gdx.input.getX() /PPM, (WORLD_HEIGHT-Gdx.input.getY()) /PPM);
 
+
+        }
         //Gdx.app.log("bodies on the world: "+world.getBodyCount() ,"");
         //Gdx.app.log("bodies to destroy: "+bodytodestroy.capacity() ,"");
         //Gdx.app.log("life: "+life ,"");
@@ -349,7 +382,7 @@ public class GameScreen implements Screen {
         time += 0.1f;
 
         //cameraUpdate(deltaTime);
-        inputUpdate(deltaTime);
+        //inputUpdate(deltaTime);
 
     }
 
@@ -384,6 +417,10 @@ public class GameScreen implements Screen {
                 }
             }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R) && ammo<30) {
+            ammo = 0;
+        }
+
 
         if (!Gdx.input.isKeyPressed(Input.Keys.Q)) {
             if ((int) player.getLinearVelocity().x < 16 && (int) player.getLinearVelocity().x > -16)
@@ -411,7 +448,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
             timerBool = true;
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && ammo > 0 && canShoot) {
-                bullet = createBullet(-1,10, 5);
+                bullet = createBullet(-1,10, 10);
                 bullet.setLinearVelocity(-60, 3);
                 ammo--;
                 fire.setPosition(player.getPosition().x*PPM, player.getPosition().y*PPM);
@@ -419,7 +456,8 @@ public class GameScreen implements Screen {
             }
 
             else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && ammo > 0 && canShoot) {
-                bullet = createBullet(1,10, 5);
+                bullet = createBullet(1,10, 10);
+                System.out.println(bullet.getMass()*10000f);
                 bullet.setLinearVelocity(+60, 3);
                 moveForce = -0.7f;
                 ammo--;
@@ -457,6 +495,16 @@ public class GameScreen implements Screen {
             Gdx.app.exit();
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 
+        }
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            // camera.zoom += 0.05;
+            System.out.println(Gdx.input.getX());
+            System.out.println(Gdx.input.getY());
+
+        }
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            //camera.zoom -= 0.05;
         }
 
 
@@ -505,8 +553,8 @@ public class GameScreen implements Screen {
         def.fixedRotation = false;
         pBody = world.createBody(def);
 
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width/2/PPM,height/2/PPM);
+        CircleShape shape = new CircleShape();
+        shape.setRadius(width/2/PPM);
         FixtureDef fixtureDef = new FixtureDef();
 
         fixtureDef.shape = shape;
@@ -517,7 +565,7 @@ public class GameScreen implements Screen {
         pBody.createFixture(fixtureDef);
         shape.dispose();
 
-        boxSprite = new Sprite(new Texture("player.png"));
+        boxSprite = new Sprite(new Texture(gamein.type));
         boxSprite.setSize(width, height);
         boxSprite.setOrigin(boxSprite.getWidth() / 2, boxSprite.getHeight() / 2);
 
@@ -546,7 +594,7 @@ public class GameScreen implements Screen {
         pBody.createFixture(fixtureDef);
         shape.dispose();
 
-        boxSprite = new Sprite(new Texture("bullet.png"));
+        boxSprite = new Sprite(new Texture("bullet1.png"));
         boxSprite.setSize(width, height);
         boxSprite.setOrigin(boxSprite.getWidth() / 2, boxSprite.getHeight() / 2);
 
@@ -588,6 +636,8 @@ public class GameScreen implements Screen {
         boxSprite.getTexture().dispose();
         fire.dispose();
         map.dispose();
+        rayHandler.dispose();
+        light.dispose();
     }
 
     public void timer(int time) {

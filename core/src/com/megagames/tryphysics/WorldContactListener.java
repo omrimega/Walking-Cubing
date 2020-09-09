@@ -9,11 +9,14 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.megagames.tryphysics.GameScreen.*;
+import com.megagames.tryphysics.TypesOfPlayer.Omri;
 
 public class WorldContactListener implements ContactListener {
     GameScreen world;
-    public WorldContactListener(GameScreen gameScreen) {
+    Omri omri;
+    public WorldContactListener(GameScreen gameScreen, Omri omriOUT) {
         world = gameScreen;
+        omri = omriOUT;
     }
 
     @Override
@@ -25,14 +28,26 @@ public class WorldContactListener implements ContactListener {
         Fixture fixB = contact.getFixtureB();
         //Gdx.app.log("contact player: "+world.player , "");
         //Gdx.app.log("contact: platform: "+ world.platform, "");
-        //Gdx.app.log("fixA : "+fixA.getBody() , "");
-        //Gdx.app.log("fixB: "+ fixB.getBody(), "");
-        //Gdx.app.log("bullet: "+ world.bullet, "");
+//        Gdx.app.log("fixA : "+fixA.getUserData() , "");
+ //       Gdx.app.log("fixB: "+ fixB.getBody().getUserData(), "");
+
+        if (fixB.getBody().getUserData() == "potato") {
+            omri.WhenPotatoDestroy();
+            world.bodytodestroy.push(fixB.getBody());
+            world.canDestroy = true;
+
+        }
+        if (fixA.getBody().getUserData() == "potato") {
+            omri.WhenPotatoDestroy();
+            world.bodytodestroy.push(fixA.getBody());
+            world.canDestroy = true;
+        }
 
         if (fixA.getBody() == world.player && fixB.getBody() == world.platform || fixA.getBody() == world.platform && fixB.getBody() == world.player || fixA.getBody().getMass() == 2.4414062f && fixB.getBody() == world.player || fixB.getBody().getMass() == 2.4414062f && fixA.getBody() == world.player) {
             world.isJump(true);
             System.out.println(fixA.getBody().getMass()*1.f);
         }
+
 
         /*if (world.bullets[world.i] == fixA.getBody() || world.bullets[world.i] == fixB.getBody()) {
             Gdx.app.log("contact bullet", "");
@@ -42,17 +57,17 @@ public class WorldContactListener implements ContactListener {
         //Gdx.app.log("fixA: " +fixB.getBody().getMass()*10000, "");
         //Gdx.app.log("fixB: " +fixB.getBody().getMass()*10000, "");
 
-        if (fixA.getBody().getMass()*10000f == 3.9062498f){
+        if (fixA.getBody().getMass()*10000f == 9.765625f){
             world.bodytodestroy.push(fixA.getBody());
             //world.qbullet = fixA.getBody();
             world.canDestroy = true;
         }
-        if (fixB.getBody().getMass()*10000f == 3.9062498f){
+        if (fixB.getBody().getMass()*10000f == 9.765625f){
             world.bodytodestroy.push(fixB.getBody());
             //world.qbullet = fixB.getBody();
             world.canDestroy = true;
         }
-        if ((fixA.getBody().getMass()*10000f == 3.9062498f && fixB.getBody() == world.player) ||(fixB.getBody().getMass()*10000f == 3.9062498f && fixA.getBody() == world.player)  ){
+        if ((fixA.getBody().getMass()*10000f == 9.765625f && fixB.getBody() == world.player) ||(fixB.getBody().getMass()*10000f == 9.765625f && fixA.getBody() == world.player)  ){
             world.life -= 0.1f;
         }
 
@@ -66,12 +81,12 @@ public class WorldContactListener implements ContactListener {
        // world.isJump(false);
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
-        if (fixA.getBody().getMass()*10000f == 3.9062498f){
+        if (fixA.getBody().getMass()*10000f == 9.765625f){
             world.bodytodestroy.push(fixA.getBody());
             //world.qbullet = fixA.getBody();
             world.canDestroy = true;
         }
-        if (fixB.getBody().getMass()*10000f == 3.9062498f){
+        if (fixB.getBody().getMass()*10000f == 9.765625f){
             world.bodytodestroy.push(fixB.getBody());
             //world.qbullet = fixB.getBody();
             world.canDestroy = true;
