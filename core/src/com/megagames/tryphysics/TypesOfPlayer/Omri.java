@@ -217,6 +217,8 @@ public class Omri {
                 //fire.reset();
             }
 
+
+
             else if (!LeftSide && ammo > 0 && canShoot) {
                 potatoBody = createPotato(1.3f,40, 20);
                 potatoBody.setLinearVelocity(+17, 7);
@@ -225,7 +227,9 @@ public class Omri {
             }
         }
 
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R) && ammo<30) {
+            ammo = 0;
+        }
 
     }
 

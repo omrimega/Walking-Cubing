@@ -186,7 +186,7 @@ public class GameScreen implements Screen {
 
         //font
         fontName = new BitmapFont(Gdx.files.internal("bit.fnt"));
-        love = new BitmapFont(Gdx.files.internal("gameFont.fnt"));
+        love = new BitmapFont(Gdx.files.internal("love.fnt"));
 
         //effect
         fire = new ParticleEffect();

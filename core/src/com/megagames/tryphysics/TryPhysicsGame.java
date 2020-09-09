@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.megagames.tryphysics.TypesOfPlayer.Omri;
 
 import org.json.JSONException;
@@ -32,6 +33,8 @@ public class TryPhysicsGame extends Game {
 
 	public HashMap<String, Omri> players;
 
+	public Stage stages;
+
 
 	@Override
 	public void create() {
@@ -42,7 +45,6 @@ public class TryPhysicsGame extends Game {
 
 		introScreen = new IntroScreen(this);
 		menuScreen = new MenuScreen(this);
-		gameScreen = new GameScreen(this);
 
 //		players = new HashMap<String, Omri>();
 

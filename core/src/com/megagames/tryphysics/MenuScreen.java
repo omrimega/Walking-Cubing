@@ -84,6 +84,8 @@ public class MenuScreen implements Screen {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         skin.getFont("bitfont").getData().setScale(1.4f);
 
+        gamein.stages = stage;
+
         background = new Texture(Gdx.files.internal("backgroundMenu.png"));
         Image image1 = new Image(background);
         image1.setWidth(WORLD_WIDTH);
@@ -116,6 +118,8 @@ public class MenuScreen implements Screen {
         btnGame.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent e, float x, float y, int point, int button) {
+                GameScreen gameScreen = new GameScreen(gamein);
+                gamein.gameScreen = gameScreen;
                 gamein.setScreen(gamein.gameScreen);
             }
         });
