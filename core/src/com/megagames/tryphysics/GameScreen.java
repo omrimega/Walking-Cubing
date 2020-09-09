@@ -244,10 +244,10 @@ public class GameScreen implements Screen {
         fire.update(deltaTime);
         fire.draw(batch);
         stage.draw();
-        //omri.OmriPlay();
-        for (HashMap.Entry<String, Omri> entry : gamein.players.entrySet()) {
+        omri.OmriPlay();
+/*        for (HashMap.Entry<String, Omri> entry : gamein.players.entrySet()) {
             entry.getValue().OmriPlay();
-        }
+       } */
         batch.end();
 
         rayHandler.setCombinedMatrix(camera.combined.cpy().scale(PPM, PPM, 1f));

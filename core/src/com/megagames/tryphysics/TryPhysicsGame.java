@@ -44,11 +44,11 @@ public class TryPhysicsGame extends Game {
 		menuScreen = new MenuScreen(this);
 		gameScreen = new GameScreen(this);
 
-		players = new HashMap<String, Omri>();
+//		players = new HashMap<String, Omri>();
 
-		ConnectSocket();
-		configSocketEvents();
-		setScreen(gameScreen);
+//		ConnectSocket();
+//		configSocketEvents();
+		setScreen(menuScreen);
 	}
 
 	@Override

@@ -205,7 +205,7 @@ public class Omri {
             LeftSide = false;
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            System.out.println(gameScreen.gamein.socket.id());
+//            System.out.println(gameScreen.gamein.socket.id());
             delayShoot = true;
 
             if (LeftSide && ammo > 0 && canShoot) {
