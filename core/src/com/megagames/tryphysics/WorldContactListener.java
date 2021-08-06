@@ -26,16 +26,16 @@ public class WorldContactListener implements ContactListener {
 
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
-        //Gdx.app.log("contact player: "+world.player , "");
-        //Gdx.app.log("contact: platform: "+ world.platform, "");
-//        Gdx.app.log("fixA : "+fixA.getUserData() , "");
- //       Gdx.app.log("fixB: "+ fixB.getBody().getUserData(), "");
+
+        Gdx.app.log("omri: : "+ world.omri.getBody(), "");
+        Gdx.app.log("fixA : "+fixA.getBody(), "");
+        Gdx.app.log("fixB: "+ fixB.getBody(), "");
+
 
         if (fixB.getBody().getUserData() == "potato") {
             omri.WhenPotatoDestroy();
             world.bodytodestroy.push(fixB.getBody());
             world.canDestroy = true;
-
         }
         if (fixA.getBody().getUserData() == "potato") {
             omri.WhenPotatoDestroy();

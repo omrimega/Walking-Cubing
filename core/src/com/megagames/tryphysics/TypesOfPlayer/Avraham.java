@@ -21,7 +21,7 @@ import com.megagames.tryphysics.GameScreen;
 
 import static com.megagames.tryphysics.Constants.PPM;
 
-public class Omri {
+public class Avraham {
 
     //game class
     private GameScreen gameScreen;
@@ -56,7 +56,6 @@ public class Omri {
     private int ammoCountDown = 0;
     public boolean potatoDestroy = false;
     private boolean LeftSide = true;
-    private int jumpCount = 0;
 
     //particle effect
     private ParticleEffect particlePotato;
@@ -68,7 +67,7 @@ public class Omri {
 
 
 
-    public Omri(GameScreen game) {
+    public Avraham(GameScreen game) {
         tx = new Texture("omri.png");
         img = new Image(tx);
         gameScreen = game;
@@ -178,7 +177,6 @@ public class Omri {
     public void InputOmri() {
         float moveForce = 0;
         float moveUp = 0;
-
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             moveForce -= 0.5f;
             omriBody.applyAngularImpulse((float) 00.1, true);
@@ -195,14 +193,12 @@ public class Omri {
         }
 
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) { //&&canJump
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) { //&&canJump
             moveUp += 11;
-            if (jumpCount <3 && jumpCount >= 0) {
-                omriBody.setLinearVelocity(omriBody.getLinearVelocity().x, omriBody.getLinearVelocity().y + moveUp);
-                jumpCount++;
-            }
         }
-
+        if ((int) omriBody.getLinearVelocity().y == 0) {
+            omriBody.setLinearVelocity(omriBody.getLinearVelocity().x, omriBody.getLinearVelocity().y + moveUp);
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
             LeftSide = true;
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
@@ -277,10 +273,6 @@ public class Omri {
         } else showAmmo = ""+ammo;
         return showAmmo;
 
-    }
-
-    public Body getBody() {
-        return omriBody;
     }
 
     public void DrawPotatoParticle() {
